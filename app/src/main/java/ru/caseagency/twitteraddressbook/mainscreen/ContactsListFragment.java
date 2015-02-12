@@ -16,8 +16,6 @@
 
 package ru.caseagency.twitteraddressbook.mainscreen;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -25,7 +23,6 @@ import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Contacts.Photo;
@@ -41,21 +38,14 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AlphabetIndexer;
 import android.widget.QuickContactBadge;
-import android.widget.SearchView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
-
-import ru.caseagency.twitteraddressbook.util.ImageLoader;
-import ru.caseagency.twitteraddressbook.util.Utils;
 
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
@@ -64,6 +54,8 @@ import java.util.Locale;
 
 import ru.caseagency.twitteraddressbook.BuildConfig;
 import ru.caseagency.twitteraddressbook.R;
+import ru.caseagency.twitteraddressbook.util.ImageLoader;
+import ru.caseagency.twitteraddressbook.util.Utils;
 
 /**
  * This fragment displays a list of contacts stored in the Contacts Provider. Each item in the list
@@ -105,36 +97,10 @@ public class ContactsListFragment extends ListFragment implements
     // can be reselected again
     private int mPreviouslySelectedSearchItem = 0;
 
-    // Whether or not the search query has changed since the last time the loader was refreshed
-    private boolean mSearchQueryChanged;
-
-    // Whether or not this is a search result view of this fragment, only used on pre-honeycomb
-    // OS versions as search results are shown in-line via Action Bar search from honeycomb onward
-    private boolean mIsSearchResultView = false;
-
     /**
      * Fragments require an empty constructor.
      */
     public ContactsListFragment() {}
-
-    /**
-     * In platform versions prior to Android 3.0, the ActionBar and SearchView are not supported,
-     * and the UI gets the search string from an EditText. However, the fragment doesn't allow
-     * another search when search results are already showing. This would confuse the user, because
-     * the resulting search would re-query the Contacts Provider instead of searching the listed
-     * results. This method sets the search query and also a boolean that tracks if this Fragment
-     * should be displayed as a search result view or not.
-     *
-     * @param query The contacts search query.
-     */
-    public void setSearchQuery(String query) {
-        if (TextUtils.isEmpty(query)) {
-            mIsSearchResultView = false;
-        } else {
-            mSearchTerm = query;
-            mIsSearchResultView = true;
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -262,134 +228,6 @@ public class ContactsListFragment extends ListFragment implements
         // contact. In a single-pane layout, the parent activity starts a new activity that
         // displays contact details in its own Fragment.
         mOnContactSelectedListener.onContactSelected(uri);
-    }
-
-    /**
-     * Called when ListView selection is cleared, for example
-     * when search mode is finished and the currently selected
-     * contact should no longer be selected.
-     */
-    private void onSelectionCleared() {
-        // Uses callback to notify activity this contains this fragment
-        mOnContactSelectedListener.onSelectionCleared();
-
-        // Clears currently checked item
-        getListView().clearChoices();
-    }
-
-    // This method uses APIs from newer OS versions than the minimum that this app supports. This
-    // annotation tells Android lint that they are properly guarded so they won't run on older OS
-    // versions and can be ignored by lint.
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
-        // Inflate the menu items
-        inflater.inflate(R.menu.contact_list_menu, menu);
-        // Locate the search item
-        MenuItem searchItem = menu.findItem(R.id.menu_search);
-
-        // In versions prior to Android 3.0, hides the search item to prevent additional
-        // searches. In Android 3.0 and later, searching is done via a SearchView in the ActionBar.
-        // Since the search doesn't create a new Activity to do the searching, the menu item
-        // doesn't need to be turned off.
-        if (mIsSearchResultView) {
-            searchItem.setVisible(false);
-        }
-
-        // In version 3.0 and later, sets up and configures the ActionBar SearchView
-        if (Utils.hasHoneycomb()) {
-
-            // Retrieves the system search manager service
-            final SearchManager searchManager =
-                    (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-
-            // Retrieves the SearchView from the search menu item
-            final SearchView searchView = (SearchView) searchItem.getActionView();
-
-            // Assign searchable info to SearchView
-            searchView.setSearchableInfo(
-                    searchManager.getSearchableInfo(getActivity().getComponentName()));
-
-            // Set listeners for SearchView
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String queryText) {
-                    // Nothing needs to happen when the user submits the search string
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    // Called when the action bar search text has changed.  Updates
-                    // the search filter, and restarts the loader to do a new query
-                    // using the new search string.
-                    String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
-
-                    // Don't do anything if the filter is empty
-                    if (mSearchTerm == null && newFilter == null) {
-                        return true;
-                    }
-
-                    // Don't do anything if the new filter is the same as the current filter
-                    if (mSearchTerm != null && mSearchTerm.equals(newFilter)) {
-                        return true;
-                    }
-
-                    // Updates current filter to new filter
-                    mSearchTerm = newFilter;
-
-                    // Restarts the loader. This triggers onCreateLoader(), which builds the
-                    // necessary content Uri from mSearchTerm.
-                    mSearchQueryChanged = true;
-                    getLoaderManager().restartLoader(
-                            ContactsQuery.QUERY_ID, null, ContactsListFragment.this);
-                    return true;
-                }
-            });
-
-            if (Utils.hasICS()) {
-                // This listener added in ICS
-                searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-                    @Override
-                    public boolean onMenuItemActionExpand(MenuItem menuItem) {
-                        // Nothing to do when the action item is expanded
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                        // When the user collapses the SearchView the current search string is
-                        // cleared and the loader restarted.
-                        if (!TextUtils.isEmpty(mSearchTerm)) {
-                            onSelectionCleared();
-                        }
-                        mSearchTerm = null;
-                        getLoaderManager().restartLoader(
-                                ContactsQuery.QUERY_ID, null, ContactsListFragment.this);
-                        return true;
-                    }
-                });
-            }
-
-            if (mSearchTerm != null) {
-                // If search term is already set here then this fragment is
-                // being restored from a saved state and the search menu item
-                // needs to be expanded and populated again.
-
-                // Stores the search term (as it will be wiped out by
-                // onQueryTextChange() when the menu item is expanded).
-                final String savedSearchTerm = mSearchTerm;
-
-                // Expands the search menu item
-                if (Utils.hasICS()) {
-                    searchItem.expandActionView();
-                }
-
-                // Sets the SearchView to the previous search string
-                searchView.setQuery(savedSearchTerm, false);
-            }
-        }
     }
 
     @Override
@@ -776,91 +614,4 @@ public class ContactsListFragment extends ListFragment implements
         }
     }
 
-    /**
-     * This interface must be implemented by any activity that loads this fragment. When an
-     * interaction occurs, such as touching an item from the ListView, these callbacks will
-     * be invoked to communicate the event back to the activity.
-     */
-    public interface OnContactsInteractionListener {
-        /**
-         * Called when a contact is selected from the ListView.
-         * @param contactUri The contact Uri.
-         */
-        public void onContactSelected(Uri contactUri);
-
-        /**
-         * Called when the ListView selection is cleared like when
-         * a contact search is taking place or is finishing.
-         */
-        public void onSelectionCleared();
-    }
-
-    /**
-     * This interface defines constants for the Cursor and CursorLoader, based on constants defined
-     * in the {@link android.provider.ContactsContract.Contacts} class.
-     */
-    public interface ContactsQuery {
-
-        // An identifier for the loader
-        final static int QUERY_ID = 1;
-
-        // A content URI for the Contacts table
-        final static Uri CONTENT_URI = Contacts.CONTENT_URI;
-
-        // The search/filter query Uri
-        final static Uri FILTER_URI = Contacts.CONTENT_FILTER_URI;
-
-        // The selection clause for the CursorLoader query. The search criteria defined here
-        // restrict results to contacts that have a display name and are linked to visible groups.
-        // Notice that the search on the string provided by the user is implemented by appending
-        // the search string to CONTENT_FILTER_URI.
-        @SuppressLint("InlinedApi")
-        final static String SELECTION =
-                (Utils.hasHoneycomb() ? Contacts.DISPLAY_NAME_PRIMARY : Contacts.DISPLAY_NAME) +
-                "<>''" + " AND " + Contacts.IN_VISIBLE_GROUP + "=1";
-
-        // The desired sort order for the returned Cursor. In Android 3.0 and later, the primary
-        // sort key allows for localization. In earlier versions. use the display name as the sort
-        // key.
-        @SuppressLint("InlinedApi")
-        final static String SORT_ORDER =
-                Utils.hasHoneycomb() ? Contacts.SORT_KEY_PRIMARY : Contacts.DISPLAY_NAME;
-
-        // The projection for the CursorLoader query. This is a list of columns that the Contacts
-        // Provider should return in the Cursor.
-        @SuppressLint("InlinedApi")
-        final static String[] PROJECTION = {
-
-                // The contact's row id
-                Contacts._ID,
-
-                // A pointer to the contact that is guaranteed to be more permanent than _ID. Given
-                // a contact's current _ID value and LOOKUP_KEY, the Contacts Provider can generate
-                // a "permanent" contact URI.
-                Contacts.LOOKUP_KEY,
-
-                // In platform version 3.0 and later, the Contacts table contains
-                // DISPLAY_NAME_PRIMARY, which either contains the contact's displayable name or
-                // some other useful identifier such as an email address. This column isn't
-                // available in earlier versions of Android, so you must use Contacts.DISPLAY_NAME
-                // instead.
-                Utils.hasHoneycomb() ? Contacts.DISPLAY_NAME_PRIMARY : Contacts.DISPLAY_NAME,
-
-                // In Android 3.0 and later, the thumbnail image is pointed to by
-                // PHOTO_THUMBNAIL_URI. In earlier versions, there is no direct pointer; instead,
-                // you generate the pointer from the contact's ID value and constants defined in
-                // android.provider.ContactsContract.Contacts.
-                Utils.hasHoneycomb() ? Contacts.PHOTO_THUMBNAIL_URI : Contacts._ID,
-
-                // The sort order column for the returned Cursor, used by the AlphabetIndexer
-                SORT_ORDER,
-        };
-
-        // The query column numbers which map to each value in the projection
-        final static int ID = 0;
-        final static int LOOKUP_KEY = 1;
-        final static int DISPLAY_NAME = 2;
-        final static int PHOTO_THUMBNAIL_DATA = 3;
-        final static int SORT_KEY = 4;
-    }
 }

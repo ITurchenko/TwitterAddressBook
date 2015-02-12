@@ -48,13 +48,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ru.caseagency.twitteraddressbook.util.ImageLoader;
-import ru.caseagency.twitteraddressbook.util.Utils;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import ru.caseagency.twitteraddressbook.R;
+import ru.caseagency.twitteraddressbook.util.ImageLoader;
+import ru.caseagency.twitteraddressbook.util.Utils;
 
 /**
  * This fragment displays details of a specific contact from the contacts provider. It shows the

@@ -16,7 +16,6 @@
 
 package ru.caseagency.twitteraddressbook.mainscreen;
 
-import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,25 +23,21 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-import ru.caseagency.twitteraddressbook.detailview.ContactDetailActivity;
-import ru.caseagency.twitteraddressbook.detailview.ContactDetailFragment;
-import ru.caseagency.twitteraddressbook.util.Utils;
-
 import ru.caseagency.twitteraddressbook.BuildConfig;
 import ru.caseagency.twitteraddressbook.R;
 import ru.caseagency.twitteraddressbook.TwitterManagerFragment;
+import ru.caseagency.twitteraddressbook.detailview.ContactDetailActivity;
+import ru.caseagency.twitteraddressbook.util.Utils;
 
 /**
  * FragmentActivity to hold the main {@link ContactsListFragment}. On larger screen devices which
  * can fit two panes also load {@link ru.caseagency.twitteraddressbook.detailview.ContactDetailFragment}.
  */
 public class ContactsListActivity extends FragmentActivity implements
-        ContactsListFragment.OnContactsInteractionListener {
+        OnContactsInteractionListener {
 
     // Defines a tag for identifying log entries
     private static final String TAG = "ContactsListActivity";
-
-    private ContactDetailFragment mContactDetailFragment;
 
     // True if this activity instance is a search result view (used on pre-HC devices that load
     // search results in a separate instance of the activity rather than loading results in-line
@@ -59,29 +54,6 @@ public class ContactsListActivity extends FragmentActivity implements
         // Set main content view. On smaller screen devices this is a single pane view with one
         // fragment. One larger screen devices this is a two pane view with two fragments.
         setContentView(R.layout.activity_main);
-
-        // Check if this activity instance has been triggered as a result of a search query. This
-        // will only happen on pre-HC OS versions as from HC onward search is carried out using
-        // an ActionBar SearchView which carries out the search in-line without loading a new
-        // Activity.
-        if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
-
-            // Fetch query from intent and notify the fragment that it should display search
-            // results instead of all contacts.
-            String searchQuery = getIntent().getStringExtra(SearchManager.QUERY);
-            ContactsListFragment mContactsListFragment = (ContactsListFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.contact_list);
-
-            // This flag notes that the Activity is doing a search, and so the result will be
-            // search results rather than all contacts. This prevents the Activity and Fragment
-            // from trying to a search on search results.
-            isSearchResultView = true;
-            mContactsListFragment.setSearchQuery(searchQuery);
-
-            // Set special title for search results
-            String title = getString(R.string.contacts_list_search_results_title, searchQuery);
-            setTitle(title);
-        }
     }
 
     /**

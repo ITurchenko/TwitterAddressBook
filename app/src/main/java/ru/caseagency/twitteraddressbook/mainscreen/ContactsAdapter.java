@@ -15,8 +15,9 @@ import android.widget.QuickContactBadge;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import ru.caseagency.twitteraddressbook.R;
-import ru.caseagency.twitteraddressbook.util.ImageLoader;
 
 /**
  * This is a subclass of CursorAdapter that supports binding Cursor columns to a view layout.
@@ -27,16 +28,13 @@ import ru.caseagency.twitteraddressbook.util.ImageLoader;
 class ContactsAdapter extends CursorAdapter implements SectionIndexer {
     private LayoutInflater mInflater; // Stores the layout inflater
     private AlphabetIndexer mAlphabetIndexer; // Stores the AlphabetIndexer instance
-    private TextAppearanceSpan highlightTextSpan; // Stores the highlight text appearance style
-    private ImageLoader imageLoader;
 
     /**
      * Instantiates a new Contacts Adapter.
      * @param context A context that has access to the app's layout.
      */
-    public ContactsAdapter(Context context, Activity activity, ImageLoader imageLoader) {
+    public ContactsAdapter(Context context, Activity activity) {
         super(context, null, 0);
-        this.imageLoader = imageLoader;
 
         // Stores inflater for use later
         mInflater = LayoutInflater.from(context);
@@ -51,10 +49,6 @@ class ContactsAdapter extends CursorAdapter implements SectionIndexer {
         // Instantiates a new AlphabetIndexer bound to the column used to sort contact names.
         // The cursor is left null, because it has not yet been retrieved.
         mAlphabetIndexer = new AlphabetIndexer(null, ContactsQuery.SORT_KEY, alphabet);
-
-        // Defines a span for highlighting the part of a display name that matches the search
-        // string
-        highlightTextSpan = new TextAppearanceSpan(activity, R.style.searchTextHiglight);
     }
 
     /**
@@ -90,11 +84,6 @@ class ContactsAdapter extends CursorAdapter implements SectionIndexer {
         // Gets handles to individual view resources
         final ViewHolder holder = (ViewHolder) view.getTag();
 
-        // For Android 3.0 and later, gets the thumbnail image Uri from the current Cursor row.
-        // For platforms earlier than 3.0, this isn't necessary, because the thumbnail is
-        // generated from the other fields in the row.
-        final String photoUri = cursor.getString(ContactsQuery.PHOTO_THUMBNAIL_DATA);
-
         final String displayName = cursor.getString(ContactsQuery.DISPLAY_NAME);
          {
             // If the user didn't do a search, or the search string didn't match a display
@@ -119,9 +108,11 @@ class ContactsAdapter extends CursorAdapter implements SectionIndexer {
         // Binds the contact's lookup Uri to the QuickContactBadge
         holder.icon.assignContactUri(contactUri);
 
-        // Loads the thumbnail image pointed to by photoUri into the QuickContactBadge in a
-        // background worker thread
-        imageLoader.loadImage(photoUri, holder.icon);
+        Picasso.with(context)
+                .load(contactUri)
+                .placeholder(R.drawable.ic_contact_picture_holo_light)
+                .tag(context)
+                .into(holder.icon);
     }
 
     /**

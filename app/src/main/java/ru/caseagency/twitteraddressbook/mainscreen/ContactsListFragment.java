@@ -113,7 +113,7 @@ public class ContactsListFragment extends ListFragment implements
         mImageLoader.addImageCache(getActivity().getSupportFragmentManager(), 0.1f);
 
         // Create the main contacts adapter
-        mAdapter = new ContactsAdapter(getActivity(), getActivity(), mImageLoader);
+        mAdapter = new ContactsAdapter(getActivity(), getActivity());
     }
 
     @Override

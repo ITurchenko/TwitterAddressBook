@@ -14,6 +14,8 @@ public class TwitterActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_twitter);
+
+        setTitle(getString(R.string.twitter_title));
     }
 
     @Override

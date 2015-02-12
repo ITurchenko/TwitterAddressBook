@@ -178,9 +178,6 @@ public class ContactDetailFragment extends Fragment implements
 
         // Check if this fragment is part of a two pane set up or a single pane
         mIsTwoPaneLayout = getResources().getBoolean(R.bool.has_two_panes);
-
-        // Let this fragment contribute menu items
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -230,45 +227,6 @@ public class ContactDetailFragment extends Fragment implements
         super.onSaveInstanceState(outState);
         // Saves the contact Uri
         outState.putParcelable(EXTRA_CONTACT_URI, mContactUri);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // When "edit" menu option selected
-            case R.id.menu_edit_contact:
-                // Standard system edit contact intent
-                Intent intent = new Intent(Intent.ACTION_EDIT, mContactUri);
-
-                // Because of an issue in Android 4.0 (API level 14), clicking Done or Back in the
-                // People app doesn't return the user to your app; instead, it displays the People
-                // app's contact list. A workaround, introduced in Android 4.0.3 (API level 15) is
-                // to set a special flag in the extended data for the Intent you send to the People
-                // app. The issue is does not appear in versions prior to Android 4.0. You can use
-                // the flag with any version of the People app; if the workaround isn't needed,
-                // the flag is ignored.
-                intent.putExtra("finishActivityOnSaveCompleted", true);
-
-                // Start the edit activity
-                startActivity(intent);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-
-        // Inflates the options menu for this fragment
-        inflater.inflate(R.menu.contact_detail_menu, menu);
-
-        // Gets a handle to the "find" menu item
-        mEditContactMenuItem = menu.findItem(R.id.menu_edit_contact);
-
-        // If contactUri is null the edit menu item should be hidden, otherwise
-        // it is visible.
-        mEditContactMenuItem.setVisible(mContactUri != null);
     }
 
     @Override

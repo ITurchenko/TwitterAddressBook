@@ -18,5 +18,7 @@
     <string name="no_intent_found">No application found to handle this action</string>
     <string name="btn_addresses">Address Book</string>
     <string name="btn_twitter">Twitter Friends</string>
+    <string name="twitter_title">Twitter friends</string>
+    <string name="contacts_title">Contacts</string>
 
 </resources>

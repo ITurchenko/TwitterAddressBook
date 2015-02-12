@@ -46,6 +46,8 @@ public class ContactsListActivity extends FragmentActivity implements
         // Set main content view. On smaller screen devices this is a single pane view with one
         // fragment. One larger screen devices this is a two pane view with two fragments.
         setContentView(R.layout.activity_contacts);
+
+        setTitle(getString(R.string.contacts_title));
     }
 
     /**

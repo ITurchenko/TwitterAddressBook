@@ -17,34 +17,21 @@
 package ru.caseagency.twitteraddressbook.mainscreen;
 
 import android.app.Activity;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
-import android.provider.ContactsContract.Contacts.Photo;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import ru.caseagency.twitteraddressbook.BuildConfig;
 import ru.caseagency.twitteraddressbook.R;
-import ru.caseagency.twitteraddressbook.util.ImageLoader;
-import ru.caseagency.twitteraddressbook.util.Utils;
 
 /**
  * This fragment displays a list of contacts stored in the Contacts Provider. Each item in the list
@@ -71,7 +58,6 @@ public class ContactsListFragment extends ListFragment implements
     private static final String TAG = "ContactsListFragment";
 
     private ContactsAdapter mAdapter; // The main query adapter
-    private ImageLoader mImageLoader; // Handles loading the contact image in a background thread
 
     // Contact selected listener that allows the activity holding this fragment to be notified of
     // a contact being selected
@@ -85,32 +71,6 @@ public class ContactsListFragment extends ListFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /*
-         * An ImageLoader object loads and resizes an image in the background and binds it to the
-         * QuickContactBadge in each item layout of the ListView. ImageLoader implements memory
-         * caching for each image, which substantially improves refreshes of the ListView as the
-         * user scrolls through it.
-         *
-         * To learn more about downloading images asynchronously and caching the results, read the
-         * Android training class Displaying Bitmaps Efficiently.
-         *
-         * http://developer.android.com/training/displaying-bitmaps/
-         */
-        mImageLoader = new ImageLoader(getActivity(), getListPreferredItemHeight()) {
-            @Override
-            protected Bitmap processBitmap(Object data) {
-                // This gets called in a background thread and passed the data from
-                // ImageLoader.loadImage().
-                return loadContactPhotoThumbnail((String) data, getImageSize());
-            }
-        };
-
-        // Set a placeholder loading image for the image loader
-        mImageLoader.setLoadingImage(R.drawable.ic_contact_picture_holo_light);
-
-        // Add a cache to the image loader
-        mImageLoader.addImageCache(getActivity().getSupportFragmentManager(), 0.1f);
 
         // Create the main contacts adapter
         mAdapter = new ContactsAdapter(getActivity(), getActivity());
@@ -131,20 +91,6 @@ public class ContactsListFragment extends ListFragment implements
         // created in onCreate().
         setListAdapter(mAdapter);
         getListView().setOnItemClickListener(this);
-        getListView().setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-                // Pause image loader to ensure smoother scrolling when flinging
-                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-                    mImageLoader.setPauseWork(true);
-                } else {
-                    mImageLoader.setPauseWork(false);
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView, int i, int i1, int i2) {}
-        });
 
         {
             // Initialize the loader, and create a loader identified by ContactsQuery.QUERY_ID
@@ -167,15 +113,6 @@ public class ContactsListFragment extends ListFragment implements
             throw new ClassCastException(activity.toString()
                     + " must implement OnContactsInteractionListener");
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        // In the case onPause() is called during a fling the image loader is
-        // un-paused to let any remaining background work complete.
-        mImageLoader.setPauseWork(false);
     }
 
     @Override
@@ -245,108 +182,4 @@ public class ContactsListFragment extends ListFragment implements
             mAdapter.swapCursor(null);
         }
     }
-
-    /**
-     * Gets the preferred height for each item in the ListView, in pixels, after accounting for
-     * screen density. ImageLoader uses this value to resize thumbnail images to match the ListView
-     * item height.
-     *
-     * @return The preferred height in pixels, based on the current theme.
-     */
-    private int getListPreferredItemHeight() {
-        final TypedValue typedValue = new TypedValue();
-
-        // Resolve list item preferred height theme attribute into typedValue
-        getActivity().getTheme().resolveAttribute(
-                android.R.attr.listPreferredItemHeight, typedValue, true);
-
-        // Create a new DisplayMetrics object
-        final DisplayMetrics metrics = new android.util.DisplayMetrics();
-
-        // Populate the DisplayMetrics
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        // Return theme value based on DisplayMetrics
-        return (int) typedValue.getDimension(metrics);
-    }
-
-    /**
-     * Decodes and scales a contact's image from a file pointed to by a Uri in the contact's data,
-     * and returns the result as a Bitmap. The column that contains the Uri varies according to the
-     * platform version.
-     *
-     * @param photoData For platforms prior to Android 3.0, provide the Contact._ID column value.
-     *                  For Android 3.0 and later, provide the Contact.PHOTO_THUMBNAIL_URI value.
-     * @param imageSize The desired target width and height of the output image in pixels.
-     * @return A Bitmap containing the contact's image, resized to fit the provided image size. If
-     * no thumbnail exists, returns null.
-     */
-    private Bitmap loadContactPhotoThumbnail(String photoData, int imageSize) {
-
-        // Ensures the Fragment is still added to an activity. As this method is called in a
-        // background thread, there's the possibility the Fragment is no longer attached and
-        // added to an activity. If so, no need to spend resources loading the contact photo.
-        if (!isAdded() || getActivity() == null) {
-            return null;
-        }
-
-        // Instantiates an AssetFileDescriptor. Given a content Uri pointing to an image file, the
-        // ContentResolver can return an AssetFileDescriptor for the file.
-        AssetFileDescriptor afd = null;
-
-        // This "try" block catches an Exception if the file descriptor returned from the Contacts
-        // Provider doesn't point to an existing file.
-        try {
-            Uri thumbUri;
-            // If Android 3.0 or later, converts the Uri passed as a string to a Uri object.
-            if (Utils.hasHoneycomb()) {
-                thumbUri = Uri.parse(photoData);
-            } else {
-                // For versions prior to Android 3.0, appends the string argument to the content
-                // Uri for the Contacts table.
-                final Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_URI, photoData);
-
-                // Appends the content Uri for the Contacts.Photo table to the previously
-                // constructed contact Uri to yield a content URI for the thumbnail image
-                thumbUri = Uri.withAppendedPath(contactUri, Photo.CONTENT_DIRECTORY);
-            }
-            // Retrieves a file descriptor from the Contacts Provider. To learn more about this
-            // feature, read the reference documentation for
-            // ContentResolver#openAssetFileDescriptor.
-            afd = getActivity().getContentResolver().openAssetFileDescriptor(thumbUri, "r");
-
-            // Gets a FileDescriptor from the AssetFileDescriptor. A BitmapFactory object can
-            // decode the contents of a file pointed to by a FileDescriptor into a Bitmap.
-            FileDescriptor fileDescriptor = afd.getFileDescriptor();
-
-            if (fileDescriptor != null) {
-                // Decodes a Bitmap from the image pointed to by the FileDescriptor, and scales it
-                // to the specified width and height
-                return ImageLoader.decodeSampledBitmapFromDescriptor(
-                        fileDescriptor, imageSize, imageSize);
-            }
-        } catch (FileNotFoundException e) {
-            // If the file pointed to by the thumbnail URI doesn't exist, or the file can't be
-            // opened in "read" mode, ContentResolver.openAssetFileDescriptor throws a
-            // FileNotFoundException.
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "Contact photo thumbnail not found for contact " + photoData
-                        + ": " + e.toString());
-            }
-        } finally {
-            // If an AssetFileDescriptor was returned, try to close it
-            if (afd != null) {
-                try {
-                    afd.close();
-                } catch (IOException e) {
-                    // Closing a file descriptor might cause an IOException if the file is
-                    // already closed. Nothing extra is needed to handle this.
-                }
-            }
-        }
-
-        // If the decoding failed, returns null
-        return null;
-    }
-
 }

@@ -13,8 +13,12 @@ import com.github.gorbin.asne.core.SocialNetwork;
 import com.github.gorbin.asne.core.SocialNetworkManager;
 import com.github.gorbin.asne.core.listener.OnLoginCompleteListener;
 import com.github.gorbin.asne.core.listener.OnRequestDetailedSocialPersonCompleteListener;
+import com.github.gorbin.asne.core.listener.OnRequestGetFriendsCompleteListener;
 import com.github.gorbin.asne.core.persons.SocialPerson;
+import com.github.gorbin.asne.twitter.TwitterPerson;
 import com.github.gorbin.asne.twitter.TwitterSocialNetwork;
+
+import java.util.ArrayList;
 
 public class TwitterManagerFragment extends Fragment implements SocialNetworkManager.OnInitializationCompleteListener, OnLoginCompleteListener, OnRequestDetailedSocialPersonCompleteListener {
 
@@ -111,6 +115,32 @@ public class TwitterManagerFragment extends Fragment implements SocialNetworkMan
 
     @Override
     public void onRequestDetailedSocialPersonSuccess(int i, SocialPerson socialPerson) {
-        Log.e("AA", "Get person "+socialPerson);
+        TwitterPerson person = (TwitterPerson) socialPerson;
+        Log.e("AA", "Get person "+person);
+
+        SocialNetwork socialNetwork = mSocialNetworkManager.getSocialNetwork(TWITTER);
+        socialNetwork.requestGetFriends(new OnRequestGetFriendsCompleteListener() {
+            @Override
+            public void OnGetFriendsIdComplete(int i, String[] strings) {
+                Log.e("AA","OnComplete 1 -> "+strings.length);
+                for (int j = 0; j < strings.length; j++) {
+                    String string = strings[j];
+                    Log.e("AA",i+"  -- "+string);
+                }
+            }
+
+            @Override
+            public void OnGetFriendsComplete(int i, ArrayList<SocialPerson> socialPersons) {
+                Log.e("AA","OnComplete 2 -> "+socialPersons.size());
+                for (SocialPerson socialPerson : socialPersons) {
+                    Log.e("AA",socialPerson.toString());
+                }
+            }
+
+            @Override
+            public void onError(int i, String s, String s2, Object o) {
+                Log.e("AA","OnError "+s+" :: "+s2);
+            }
+        });
     }
 }

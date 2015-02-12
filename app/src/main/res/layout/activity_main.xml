@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2013 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +18,19 @@
      displays a list of contacts. Tapping on a contact will start a new activity to display the
      contact details. -->
 
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-          android:name="com.example.android.contactslist.ui.ContactsListFragment"
-          android:id="@+id/contact_list"
-          android:layout_height="match_parent"
-          android:layout_width="match_parent"/>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/contact_list"
+        android:name="com.example.android.contactslist.ui.ContactsListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/social"
+        android:name="ru.caseagency.twitteraddressbook.TwitterManagerFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

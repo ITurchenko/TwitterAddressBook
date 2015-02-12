@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.contactslist.ui;
+package ru.caseagency.twitteraddressbook.detailview;
 
 import android.annotation.TargetApi;
 import android.net.Uri;
@@ -25,7 +25,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
-import com.example.android.contactslist.util.Utils;
+import ru.caseagency.twitteraddressbook.util.Utils;
 
 /**
  * This class defines a simple FragmentActivity as the parent of {@link ContactDetailFragment}.

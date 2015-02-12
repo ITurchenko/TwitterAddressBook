@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.contactslist.util;
+package ru.caseagency.twitteraddressbook.util;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LruCache;
-import android.util.Log;
 
 /**
  * This class holds our bitmap caches (memory and disk).

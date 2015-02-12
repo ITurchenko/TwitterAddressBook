@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.contactslist.ui;
+package ru.caseagency.twitteraddressbook.detailview;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -36,7 +36,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,8 +48,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.contactslist.util.ImageLoader;
-import com.example.android.contactslist.util.Utils;
+import ru.caseagency.twitteraddressbook.util.ImageLoader;
+import ru.caseagency.twitteraddressbook.util.Utils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -64,7 +63,7 @@ import ru.caseagency.twitteraddressbook.R;
  *
  * This fragment appears full-screen in an activity on devices with small screen sizes, and as
  * part of a two-pane layout on devices with larger screens, alongside the
- * {@link ContactsListFragment}.
+ * {@link ru.caseagency.twitteraddressbook.mainscreen.ContactsListFragment}.
  *
  * To create an instance of this fragment, use the factory method
  * {@link ContactDetailFragment#newInstance(android.net.Uri)}, passing as an argument the contact

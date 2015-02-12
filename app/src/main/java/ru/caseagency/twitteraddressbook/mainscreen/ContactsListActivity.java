@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.contactslist.ui;
+package ru.caseagency.twitteraddressbook.mainscreen;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -24,7 +24,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-import com.example.android.contactslist.util.Utils;
+import ru.caseagency.twitteraddressbook.detailview.ContactDetailActivity;
+import ru.caseagency.twitteraddressbook.detailview.ContactDetailFragment;
+import ru.caseagency.twitteraddressbook.util.Utils;
 
 import ru.caseagency.twitteraddressbook.BuildConfig;
 import ru.caseagency.twitteraddressbook.R;
@@ -32,7 +34,7 @@ import ru.caseagency.twitteraddressbook.TwitterManagerFragment;
 
 /**
  * FragmentActivity to hold the main {@link ContactsListFragment}. On larger screen devices which
- * can fit two panes also load {@link ContactDetailFragment}.
+ * can fit two panes also load {@link ru.caseagency.twitteraddressbook.detailview.ContactDetailFragment}.
  */
 public class ContactsListActivity extends FragmentActivity implements
         ContactsListFragment.OnContactsInteractionListener {
@@ -41,9 +43,6 @@ public class ContactsListActivity extends FragmentActivity implements
     private static final String TAG = "ContactsListActivity";
 
     private ContactDetailFragment mContactDetailFragment;
-
-    // If true, this is a larger screen device which fits two panes
-    private boolean isTwoPaneLayout;
 
     // True if this activity instance is a search result view (used on pre-HC devices that load
     // search results in a separate instance of the activity rather than loading results in-line
@@ -60,9 +59,6 @@ public class ContactsListActivity extends FragmentActivity implements
         // Set main content view. On smaller screen devices this is a single pane view with one
         // fragment. One larger screen devices this is a two pane view with two fragments.
         setContentView(R.layout.activity_main);
-
-        // Check if two pane bool is set based on resource directories
-        isTwoPaneLayout = getResources().getBoolean(R.bool.has_two_panes);
 
         // Check if this activity instance has been triggered as a result of a search query. This
         // will only happen on pre-HC OS versions as from HC onward search is carried out using
@@ -86,12 +82,6 @@ public class ContactsListActivity extends FragmentActivity implements
             String title = getString(R.string.contacts_list_search_results_title, searchQuery);
             setTitle(title);
         }
-
-        if (isTwoPaneLayout) {
-            // If two pane layout, locate the contact detail fragment
-            mContactDetailFragment = (ContactDetailFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.contact_detail);
-        }
     }
 
     /**
@@ -102,16 +92,11 @@ public class ContactsListActivity extends FragmentActivity implements
      */
     @Override
     public void onContactSelected(Uri contactUri) {
-        if (isTwoPaneLayout && mContactDetailFragment != null) {
-            // If two pane layout then update the detail fragment to show the selected contact
-            mContactDetailFragment.setContact(contactUri);
-        } else {
-            // Otherwise single pane layout, start a new ContactDetailActivity with
-            // the contact Uri
-            Intent intent = new Intent(this, ContactDetailActivity.class);
-            intent.setData(contactUri);
-            startActivity(intent);
-        }
+        // Otherwise single pane layout, start a new ContactDetailActivity with
+        // the contact Uri
+        Intent intent = new Intent(this, ContactDetailActivity.class);
+        intent.setData(contactUri);
+        startActivity(intent);
     }
 
     /**
@@ -120,9 +105,6 @@ public class ContactsListActivity extends FragmentActivity implements
      */
     @Override
     public void onSelectionCleared() {
-        if (isTwoPaneLayout && mContactDetailFragment != null) {
-            mContactDetailFragment.setContact(null);
-        }
     }
 
     @Override

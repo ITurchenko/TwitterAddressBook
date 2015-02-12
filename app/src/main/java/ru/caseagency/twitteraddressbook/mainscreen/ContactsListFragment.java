@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.example.android.contactslist.ui;
+package ru.caseagency.twitteraddressbook.mainscreen;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -50,14 +49,13 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AlphabetIndexer;
-import android.widget.ListView;
 import android.widget.QuickContactBadge;
 import android.widget.SearchView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-import com.example.android.contactslist.util.ImageLoader;
-import com.example.android.contactslist.util.Utils;
+import ru.caseagency.twitteraddressbook.util.ImageLoader;
+import ru.caseagency.twitteraddressbook.util.Utils;
 
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
@@ -71,7 +69,7 @@ import ru.caseagency.twitteraddressbook.R;
  * This fragment displays a list of contacts stored in the Contacts Provider. Each item in the list
  * shows the contact's thumbnail photo and display name. On devices with large screens, this
  * fragment's UI appears as part of a two-pane layout, along with the UI of
- * {@link ContactDetailFragment}. On smaller screens, this fragment's UI appears as a single pane.
+ * {@link ru.caseagency.twitteraddressbook.detailview.ContactDetailFragment}. On smaller screens, this fragment's UI appears as a single pane.
  *
  * This Fragment retrieves contacts based on a search string. If the user doesn't enter a search
  * string, then the list contains all the contacts in the Contacts Provider. If the user enters a
@@ -110,9 +108,6 @@ public class ContactsListFragment extends ListFragment implements
     // Whether or not the search query has changed since the last time the loader was refreshed
     private boolean mSearchQueryChanged;
 
-    // Whether or not this fragment is showing in a two-pane layout
-    private boolean mIsTwoPaneLayout;
-
     // Whether or not this is a search result view of this fragment, only used on pre-honeycomb
     // OS versions as search results are shown in-line via Action Bar search from honeycomb onward
     private boolean mIsSearchResultView = false;
@@ -144,15 +139,6 @@ public class ContactsListFragment extends ListFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Check if this fragment is part of a two-pane set up or a single pane by reading a
-        // boolean from the application resource directories. This lets allows us to easily specify
-        // which screen sizes should use a two-pane layout by setting this boolean in the
-        // corresponding resource size-qualified directory.
-        mIsTwoPaneLayout = getResources().getBoolean(R.bool.has_two_panes);
-
-        // Let this fragment contribute menu items
-        setHasOptionsMenu(true);
 
         // Create the main contacts adapter
         mAdapter = new ContactsAdapter(getActivity());
@@ -223,13 +209,6 @@ public class ContactsListFragment extends ListFragment implements
             public void onScroll(AbsListView absListView, int i, int i1, int i2) {}
         });
 
-        if (mIsTwoPaneLayout) {
-            // In a two-pane layout, set choice mode to single as there will be two panes
-            // when an item in the ListView is selected it should remain highlighted while
-            // the content shows in the second pane.
-            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        }
-
         // If there's a previously selected search item from a saved state then don't bother
         // initializing the loader as it will be restarted later when the query is populated into
         // the action bar search view (see onQueryTextChange() in onCreateOptionsMenu()).
@@ -283,12 +262,6 @@ public class ContactsListFragment extends ListFragment implements
         // contact. In a single-pane layout, the parent activity starts a new activity that
         // displays contact details in its own Fragment.
         mOnContactSelectedListener.onContactSelected(uri);
-
-        // If two-pane layout sets the selected item to checked so it remains highlighted. In a
-        // single-pane layout a new activity is started so this is not needed.
-        if (mIsTwoPaneLayout) {
-            getListView().setItemChecked(position, true);
-        }
     }
 
     /**
@@ -432,24 +405,6 @@ public class ContactsListFragment extends ListFragment implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Sends a request to the People app to display the create contact screen
-            case R.id.menu_add_contact:
-                final Intent intent = new Intent(Intent.ACTION_INSERT, Contacts.CONTENT_URI);
-                startActivity(intent);
-                break;
-            // For platforms earlier than Android 3.0, triggers the search activity
-            case R.id.menu_search:
-                if (!Utils.hasHoneycomb()) {
-                    getActivity().onSearchRequested();
-                }
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
         // If this is the loader for finding contacts in the Contacts Provider
@@ -493,31 +448,6 @@ public class ContactsListFragment extends ListFragment implements
         // This swaps the new cursor into the adapter.
         if (loader.getId() == ContactsQuery.QUERY_ID) {
             mAdapter.swapCursor(data);
-
-            // If this is a two-pane layout and there is a search query then
-            // there is some additional work to do around default selected
-            // search item.
-            if (mIsTwoPaneLayout && !TextUtils.isEmpty(mSearchTerm) && mSearchQueryChanged) {
-                // Selects the first item in results, unless this fragment has
-                // been restored from a saved state (like orientation change)
-                // in which case it selects the previously selected search item.
-                if (data != null && data.moveToPosition(mPreviouslySelectedSearchItem)) {
-                    // Creates the content Uri for the previously selected contact by appending the
-                    // contact's ID to the Contacts table content Uri
-                    final Uri uri = Uri.withAppendedPath(
-                            Contacts.CONTENT_URI, String.valueOf(data.getLong(ContactsQuery.ID)));
-                    mOnContactSelectedListener.onContactSelected(uri);
-                    getListView().setItemChecked(mPreviouslySelectedSearchItem, true);
-                } else {
-                    // No results, clear selection.
-                    onSelectionCleared();
-                }
-                // Only restore from saved state one time. Next time fall back
-                // to selecting first item. If the fragment state is saved again
-                // then the currently selected item will once again be saved.
-                mPreviouslySelectedSearchItem = 0;
-                mSearchQueryChanged = false;
-            }
         }
     }
 

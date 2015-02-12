@@ -15,13 +15,13 @@
         android:theme="@style/AppTheme">
         <activity android:name="ru.caseagency.twitteraddressbook.AddressBook">
         </activity>
-        <activity android:name="com.example.android.contactslist.ui.ContactsListActivity" >
+        <activity android:name=".mainscreen.ContactsListActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.android.contactslist.ui.ContactDetailActivity" />
+        <activity android:name=".detailview.ContactDetailActivity" />
 
         <activity android:name="com.github.gorbin.asne.core.OAuthActivity" />
     </application>

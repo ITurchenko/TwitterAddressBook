@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.contactslist.util;
+package ru.caseagency.twitteraddressbook.util;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -26,7 +26,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.FileDescriptor;

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.example.android.contactslist.util;
+package ru.caseagency.twitteraddressbook.util;
 
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.StrictMode;
 
-import com.example.android.contactslist.ui.ContactDetailActivity;
-import com.example.android.contactslist.ui.ContactsListActivity;
+import ru.caseagency.twitteraddressbook.detailview.ContactDetailActivity;
+import ru.caseagency.twitteraddressbook.mainscreen.ContactsListActivity;
 
 /**
  * This class contains static utility methods.

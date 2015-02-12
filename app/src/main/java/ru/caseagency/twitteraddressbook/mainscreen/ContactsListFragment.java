@@ -73,7 +73,7 @@ public class ContactsListFragment extends ListFragment implements
         super.onCreate(savedInstanceState);
 
         // Create the main contacts adapter
-        mAdapter = new ContactsAdapter(getActivity(), getActivity());
+        mAdapter = new ContactsAdapter(getActivity());
     }
 
     @Override

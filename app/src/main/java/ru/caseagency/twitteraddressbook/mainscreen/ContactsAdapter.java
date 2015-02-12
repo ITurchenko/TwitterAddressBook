@@ -32,7 +32,7 @@ class ContactsAdapter extends CursorAdapter implements SectionIndexer {
      * Instantiates a new Contacts Adapter.
      * @param context A context that has access to the app's layout.
      */
-    public ContactsAdapter(Context context, Activity activity) {
+    public ContactsAdapter(Context context) {
         super(context, null, 0);
 
         // Stores inflater for use later

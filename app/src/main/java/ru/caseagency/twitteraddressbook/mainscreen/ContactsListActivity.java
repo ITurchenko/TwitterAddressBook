@@ -23,7 +23,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-import ru.caseagency.twitteraddressbook.BuildConfig;
 import ru.caseagency.twitteraddressbook.R;
 import ru.caseagency.twitteraddressbook.TwitterManagerFragment;
 import ru.caseagency.twitteraddressbook.detailview.ContactDetailActivity;

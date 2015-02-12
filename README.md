@@ -5,3 +5,7 @@ Demo version of application for mathing contacts from address book and from Soci
 ### Used Github libraries
 - [ASNE (for Twitter)] (https://github.com/gorbin/ASNE)
 - [Picasso (for image loading)] (https://github.com/square/picasso)
+
+
+### APK
+Can be downloaded at [release page] (https://github.com/ITurchenko/TwitterAddressBook/releases)

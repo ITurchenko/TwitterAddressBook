@@ -1,4 +1,4 @@
-package ru.caseagency.twitteraddressbook;
+package ru.caseagency.twitteraddressbook.twitter;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,7 +20,9 @@ import com.github.gorbin.asne.twitter.TwitterSocialNetwork;
 
 import java.util.ArrayList;
 
-public class TwitterManagerFragment extends Fragment implements SocialNetworkManager.OnInitializationCompleteListener, OnLoginCompleteListener, OnRequestDetailedSocialPersonCompleteListener {
+import ru.caseagency.twitteraddressbook.R;
+
+public class TwitterActivityFragment extends Fragment implements SocialNetworkManager.OnInitializationCompleteListener, OnLoginCompleteListener, OnRequestDetailedSocialPersonCompleteListener {
 
     public static final String CONSUMER_KEY = "LKFmQe7nwVOikPAohwd5OlkIR";
     public static final String CONSUMER_SECRET = "33HlpPQDRKEVL3fZbrk2nM173L1k4v85903YooZQ5ITJ0neysk";

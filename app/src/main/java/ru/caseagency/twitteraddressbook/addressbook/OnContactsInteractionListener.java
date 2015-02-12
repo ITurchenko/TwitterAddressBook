@@ -1,4 +1,4 @@
-package ru.caseagency.twitteraddressbook.mainscreen;
+package ru.caseagency.twitteraddressbook.addressbook;
 
 import android.net.Uri;
 

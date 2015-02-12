@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package ru.caseagency.twitteraddressbook.mainscreen;
+package ru.caseagency.twitteraddressbook.addressbook;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 
 import ru.caseagency.twitteraddressbook.R;
-import ru.caseagency.twitteraddressbook.TwitterManagerFragment;
 import ru.caseagency.twitteraddressbook.detailview.ContactDetailActivity;
 
 /**
@@ -48,7 +45,7 @@ public class ContactsListActivity extends FragmentActivity implements
 
         // Set main content view. On smaller screen devices this is a single pane view with one
         // fragment. One larger screen devices this is a two pane view with two fragments.
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_contacts);
     }
 
     /**
@@ -79,19 +76,5 @@ public class ContactsListActivity extends FragmentActivity implements
         // Don't allow another search if this activity instance is already showing
         // search results. Only used pre-HC.
         return !isSearchResultView && super.onSearchRequested();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(TwitterManagerFragment.SOCIAL_NETWORK_TAG);
-        if (fragment != null && data != null) {
-            try {
-                fragment.onActivityResult(requestCode, resultCode, data);
-            } catch (Exception e) {
-                Log.e(getClass().getName(), "Some social network error: " + e.getMessage());
-            }
-        }
     }
 }

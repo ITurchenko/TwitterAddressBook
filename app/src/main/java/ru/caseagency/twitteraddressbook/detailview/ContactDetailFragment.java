@@ -50,7 +50,7 @@ import ru.caseagency.twitteraddressbook.R;
  *
  * This fragment appears full-screen in an activity on devices with small screen sizes, and as
  * part of a two-pane layout on devices with larger screens, alongside the
- * {@link ru.caseagency.twitteraddressbook.mainscreen.ContactsListFragment}.
+ * {@link ru.caseagency.twitteraddressbook.addressbook.ContactsListFragment}.
  *
  * To create an instance of this fragment, use the factory method
  * {@link ContactDetailFragment#newInstance(android.net.Uri)}, passing as an argument the contact

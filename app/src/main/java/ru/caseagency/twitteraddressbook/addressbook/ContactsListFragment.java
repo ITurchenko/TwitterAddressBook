@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ru.caseagency.twitteraddressbook.mainscreen;
+package ru.caseagency.twitteraddressbook.addressbook;
 
 import android.app.Activity;
 import android.database.Cursor;

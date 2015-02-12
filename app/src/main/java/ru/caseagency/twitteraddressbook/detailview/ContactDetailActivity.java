@@ -25,8 +25,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
-import ru.caseagency.twitteraddressbook.util.Utils;
-
 /**
  * This class defines a simple FragmentActivity as the parent of {@link ContactDetailFragment}.
  */
@@ -46,11 +44,8 @@ public class ContactDetailActivity extends FragmentActivity {
         // This activity expects to receive an intent that contains the uri of a contact
         if (getIntent() != null) {
 
-            // For OS versions honeycomb and higher use action bar
-            if (Utils.hasHoneycomb()) {
-                // Enables action bar "up" navigation
-                getActionBar().setDisplayHomeAsUpEnabled(true);
-            }
+            // Enables action bar "up" navigation
+            getActionBar().setDisplayHomeAsUpEnabled(true);
 
             // Fetch the data Uri from the intent provided to this activity
             final Uri uri = getIntent().getData();

@@ -3,8 +3,6 @@ package ru.caseagency.twitteraddressbook.detailview;
 import android.annotation.SuppressLint;
 import android.provider.ContactsContract;
 
-import ru.caseagency.twitteraddressbook.util.Utils;
-
 /**
  * This interface defines constants used by contact retrieval queries.
  */
@@ -17,7 +15,7 @@ public interface ContactDetailQuery {
     @SuppressLint("InlinedApi")
     final static String[] PROJECTION = {
             ContactsContract.Contacts._ID,
-            Utils.hasHoneycomb() ? ContactsContract.Contacts.DISPLAY_NAME_PRIMARY : ContactsContract.Contacts.DISPLAY_NAME,
+            ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
     };
 
     // The query column numbers which map to each value in the projection

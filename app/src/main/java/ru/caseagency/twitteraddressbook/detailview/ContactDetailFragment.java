@@ -42,7 +42,6 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import ru.caseagency.twitteraddressbook.R;
-import ru.caseagency.twitteraddressbook.util.Utils;
 
 /**
  * This fragment displays details of a specific contact from the contacts provider. It shows the
@@ -124,17 +123,8 @@ public class ContactDetailFragment extends Fragment implements
 
         // In version 3.0 and later, stores the provided contact lookup Uri in a class field. This
         // Uri is then used at various points in this class to map to the provided contact.
-        if (Utils.hasHoneycomb()) {
-            mContactUri = contactLookupUri;
-        } else {
-            // For versions earlier than Android 3.0, stores a contact Uri that's constructed from
-            // contactLookupUri. Later on, the resulting Uri is combined with
-            // Contacts.Data.CONTENT_DIRECTORY to map to the provided contact. It's done
-            // differently for these earlier versions because Contacts.Data.CONTENT_DIRECTORY works
-            // differently for Android versions before 3.0.
-            mContactUri = Contacts.lookupContact(getActivity().getContentResolver(),
-                    contactLookupUri);
-        }
+
+        mContactUri = contactLookupUri;
 
         // If the Uri contains data, load the contact's image and load contact details.
         if (contactLookupUri != null) {

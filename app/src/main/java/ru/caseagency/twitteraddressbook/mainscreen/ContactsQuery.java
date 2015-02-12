@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.provider.ContactsContract;
 
-import ru.caseagency.twitteraddressbook.util.Utils;
-
 /**
  * This interface defines constants for the Cursor and CursorLoader, based on constants defined
  * in the {@link android.provider.ContactsContract.Contacts} class.
@@ -27,7 +25,7 @@ public interface ContactsQuery {
     // the search string to CONTENT_FILTER_URI.
     @SuppressLint("InlinedApi")
     final static String SELECTION =
-            (Utils.hasHoneycomb() ? ContactsContract.Contacts.DISPLAY_NAME_PRIMARY : ContactsContract.Contacts.DISPLAY_NAME) +
+            ContactsContract.Contacts.DISPLAY_NAME_PRIMARY +
             "<>''" + " AND " + ContactsContract.Contacts.IN_VISIBLE_GROUP + "=1";
 
     // The desired sort order for the returned Cursor. In Android 3.0 and later, the primary
@@ -35,7 +33,7 @@ public interface ContactsQuery {
     // key.
     @SuppressLint("InlinedApi")
     final static String SORT_ORDER =
-            Utils.hasHoneycomb() ? ContactsContract.Contacts.SORT_KEY_PRIMARY : ContactsContract.Contacts.DISPLAY_NAME;
+            ContactsContract.Contacts.SORT_KEY_PRIMARY;
 
     // The projection for the CursorLoader query. This is a list of columns that the Contacts
     // Provider should return in the Cursor.
@@ -55,13 +53,13 @@ public interface ContactsQuery {
             // some other useful identifier such as an email address. This column isn't
             // available in earlier versions of Android, so you must use Contacts.DISPLAY_NAME
             // instead.
-            Utils.hasHoneycomb() ? ContactsContract.Contacts.DISPLAY_NAME_PRIMARY : ContactsContract.Contacts.DISPLAY_NAME,
+            ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
 
             // In Android 3.0 and later, the thumbnail image is pointed to by
             // PHOTO_THUMBNAIL_URI. In earlier versions, there is no direct pointer; instead,
             // you generate the pointer from the contact's ID value and constants defined in
             // android.provider.ContactsContract.Contacts.
-            Utils.hasHoneycomb() ? ContactsContract.Contacts.PHOTO_THUMBNAIL_URI : ContactsContract.Contacts._ID,
+            ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
 
             // The sort order column for the returned Cursor, used by the AlphabetIndexer
             SORT_ORDER,

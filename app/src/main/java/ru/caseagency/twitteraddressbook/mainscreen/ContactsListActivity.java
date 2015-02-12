@@ -27,7 +27,6 @@ import ru.caseagency.twitteraddressbook.BuildConfig;
 import ru.caseagency.twitteraddressbook.R;
 import ru.caseagency.twitteraddressbook.TwitterManagerFragment;
 import ru.caseagency.twitteraddressbook.detailview.ContactDetailActivity;
-import ru.caseagency.twitteraddressbook.util.Utils;
 
 /**
  * FragmentActivity to hold the main {@link ContactsListFragment}. On larger screen devices which
@@ -46,9 +45,6 @@ public class ContactsListActivity extends FragmentActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (BuildConfig.DEBUG) {
-            Utils.enableStrictMode();
-        }
         super.onCreate(savedInstanceState);
 
         // Set main content view. On smaller screen devices this is a single pane view with one

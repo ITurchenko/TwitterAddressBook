@@ -20,12 +20,15 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.example.android.contactslist.util.Utils;
 
 import ru.caseagency.twitteraddressbook.BuildConfig;
 import ru.caseagency.twitteraddressbook.R;
+import ru.caseagency.twitteraddressbook.TwitterManagerFragment;
 
 /**
  * FragmentActivity to hold the main {@link ContactsListFragment}. On larger screen devices which
@@ -127,5 +130,19 @@ public class ContactsListActivity extends FragmentActivity implements
         // Don't allow another search if this activity instance is already showing
         // search results. Only used pre-HC.
         return !isSearchResultView && super.onSearchRequested();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(TwitterManagerFragment.SOCIAL_NETWORK_TAG);
+        if (fragment != null && data != null) {
+            try {
+                fragment.onActivityResult(requestCode, resultCode, data);
+            } catch (Exception e) {
+                Log.e(getClass().getName(), "Some social network error: " + e.getMessage());
+            }
+        }
     }
 }

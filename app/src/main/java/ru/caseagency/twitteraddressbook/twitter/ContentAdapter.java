@@ -1,7 +1,6 @@
 package ru.caseagency.twitteraddressbook.twitter;
 
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -9,7 +8,6 @@ import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
 import com.github.gorbin.asne.core.persons.SocialPerson;
-import com.github.gorbin.asne.twitter.TwitterPerson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

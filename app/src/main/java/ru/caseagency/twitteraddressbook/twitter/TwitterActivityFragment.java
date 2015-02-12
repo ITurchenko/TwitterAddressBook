@@ -3,7 +3,6 @@ package ru.caseagency.twitteraddressbook.twitter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +12,8 @@ import android.widget.Toast;
 import com.github.gorbin.asne.core.SocialNetwork;
 import com.github.gorbin.asne.core.SocialNetworkManager;
 import com.github.gorbin.asne.core.listener.OnLoginCompleteListener;
-import com.github.gorbin.asne.core.listener.OnRequestDetailedSocialPersonCompleteListener;
 import com.github.gorbin.asne.core.listener.OnRequestGetFriendsCompleteListener;
 import com.github.gorbin.asne.core.persons.SocialPerson;
-import com.github.gorbin.asne.twitter.TwitterPerson;
 import com.github.gorbin.asne.twitter.TwitterSocialNetwork;
 
 import java.util.ArrayList;
@@ -35,6 +32,7 @@ public class TwitterActivityFragment extends Fragment implements SocialNetworkMa
 
     private SocialNetworkManager mSocialNetworkManager;
     private ContentAdapter contentAdapter;
+    private View loader;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -43,6 +41,8 @@ public class TwitterActivityFragment extends Fragment implements SocialNetworkMa
         ListView listView = (ListView) rootView.findViewById(R.id.twitter_list);
         contentAdapter = new ContentAdapter(this);
         listView.setAdapter(contentAdapter);
+
+        loader = rootView.findViewById(R.id.loader);
 
         init();
 
@@ -100,6 +100,7 @@ public class TwitterActivityFragment extends Fragment implements SocialNetworkMa
 
             @Override
             public void OnGetFriendsComplete(int i, ArrayList<SocialPerson> socialPersons) {
+                hideLoader();
                 for (SocialPerson socialPerson : socialPersons) {
                     contentAdapter.add(socialPerson);
                 }
@@ -107,8 +108,13 @@ public class TwitterActivityFragment extends Fragment implements SocialNetworkMa
 
             @Override
             public void onError(int i, String s, String s2, Object o) {
-            }
+                hideLoader();
+                Toast.makeText(getActivity(), "ERROR: " + s, Toast.LENGTH_LONG).show();}
         });
+    }
+
+    private void hideLoader() {
+        loader.setVisibility(View.GONE);
     }
 
     @Override

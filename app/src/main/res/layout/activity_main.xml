@@ -12,14 +12,16 @@
         <Button
             android:id="@+id/btn_addresses"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="4dp"
             android:minWidth="200dp"
             android:text="@string/btn_addresses" />
 
         <Button
             android:id="@+id/btn_twitter"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="4dp"
             android:minWidth="200dp"
             android:text="@string/btn_twitter" />
     </LinearLayout>

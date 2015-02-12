@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Demo Contacts List</string>
+    <string name="app_name">TwitterAddressBook</string>
     <string name="imageview_description">Contact Thumbnail</string>
     <string name="address_button_description">View Address</string>
     

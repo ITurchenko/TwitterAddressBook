@@ -18,9 +18,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".addressbook.ContactsListActivity"  />
-        <activity android:name=".detailview.ContactDetailActivity" />
-        <activity android:name=".twitter.TwitterActivity"/>
+        <activity android:name=".addressbook.ContactsListActivity" android:parentActivityName=".ActivityMain" />
+        <activity android:name=".detailview.ContactDetailActivity" android:parentActivityName=".addressbook.ContactsListActivity"/>
+        <activity android:name=".twitter.TwitterActivity" android:parentActivityName=".ActivityMain"/>
 
 
         <activity android:name="com.github.gorbin.asne.core.OAuthActivity" />

@@ -46,13 +46,9 @@ public class TwitterActivityFragment extends Fragment implements SocialNetworkMa
 
         init();
 
-        return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         loginBySocial(TWITTER);
+
+        return rootView;
     }
 
     public void init() {

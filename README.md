@@ -1,4 +1,4 @@
-#Twitter and AddressBook demo project
+#TwitterAddressBook - demo project
 
 Demo version of application for mathing contacts from address book and from Social Networks (Twitter)
 
